@@ -11,6 +11,7 @@ export interface IInnings extends Document {
   
   totalRuns: number;
   totalWickets: number;
+  totalOverInMatch: number;
   oversCompleted: number;
   ballsInCurrentOver: number; 
   extras: number;
@@ -58,7 +59,10 @@ const InningsSchema = new Schema<IInnings>(
       ref: "Team",
       required: true,
     },
-
+    // totalOverInMatch: {
+    //   type: Number,
+    //   required: true,
+    // },
   
     totalRuns: {
       type: Number,

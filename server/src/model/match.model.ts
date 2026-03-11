@@ -67,6 +67,7 @@ export enum MatchType {
   T20 = "t20",
   ODI = "odi",
   BOX = "box-cricket",
+  Simple = "simple",
 }
 
 export enum TossDecision {
@@ -87,6 +88,7 @@ export interface IMatch {
   matchType: MatchType;
   venue: string;
   matchDate: Date;
+  totalOverInMatch: number;
 
   playingTeamA: Types.ObjectId[];
   playingTeamB: Types.ObjectId[];
@@ -162,6 +164,11 @@ const matchSchema = new Schema<IMatch>(
       type: Date,
     //   required: true,
      },
+
+    totalOverInMatch: {
+      type: Number,
+      required: true,
+    },
 
     status: {
       type: String,

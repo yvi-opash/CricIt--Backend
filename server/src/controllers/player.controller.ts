@@ -6,10 +6,10 @@ import Players from '../model/players.model'
 export const createPlayer = async(req : AuthRequest, res: Response) =>{
    try{
 
-     const {playername, role, tags, teamId} = req.body;
+     const {playername, role, tags} = req.body;
      const  createdBy  = req.user?.id;    
 
-     if(!playername || !role ||!tags || !teamId){
+     if(!playername || !role ||!tags ){
            return res.status(400).json({message: "playername, role, and teamId are required."})
        }
 
@@ -21,7 +21,6 @@ export const createPlayer = async(req : AuthRequest, res: Response) =>{
           playername,
           role,
           tags,
-          teamId,
           createdBy
       })
 
@@ -35,7 +34,7 @@ export const createPlayer = async(req : AuthRequest, res: Response) =>{
 
 export const getAllPlayer = async (req : AuthRequest, res: Response) => {
     try{
-        const players = await Players.find({ createdBy: req.user?.id }).populate('teamId', 'teamname');
+        const players = await Players.find({ createdBy: req.user?.id }).populate('createdBy', 'username email');
 
         const createdBy = req.user?.id;
         if(!createdBy) {
@@ -63,11 +62,11 @@ export const deletePlayer = async (req: Request, res:Response) => {
 export const updatePlayer = async (req : Request, res: Response) => {
     try {
         const {id} = req.params;
-        const {playername, role, tags} = req.body;
+        const {playername, role, tags } = req.body;
 
         const player = await Players.findByIdAndUpdate(
             id,
-            {playername, role, tags},
+            {playername, role, tags },
             {new: true, runValidators: true}
         );
 

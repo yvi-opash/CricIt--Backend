@@ -7,7 +7,7 @@ import { request } from "https";
 
 export const createMatch = async (req: AuthRequest, res: Response) => {
   try {
-    const { teamA, teamB } = req.body;
+    const { teamA, teamB, matchType, venue, matchDate, totalOverInMatch } = req.body;
     const createdBy = req.user?.id;
 
     if (!createdBy) {
@@ -33,15 +33,22 @@ export const createMatch = async (req: AuthRequest, res: Response) => {
     const match = new Match({
       teamA,
       teamB,
+      matchType,
+      venue,
+      matchDate,
+      totalOverInMatch,
       status: MatchStatus.UPCOMING,
       createdBy,
     });
 
+    if(totalOverInMatch > 50 && totalOverInMatch < 0){
+      res.status(400).json({message: "Enter Valid Over"})
+    }
+
+
+
     await match.save();
-    res.status(200).json({
-      message: "match created",
-      match,
-    });
+    res.status(200).json({message: "match created",match});
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }

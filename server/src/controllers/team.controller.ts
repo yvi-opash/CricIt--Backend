@@ -84,7 +84,7 @@ export const deleteTeam = async (req: AuthRequest, res:Response) => {
         await Team.findByIdAndDelete(id);
         res.status(200).json({message: "team deleted"});
     }catch(error){
-       res.status(500).json({ message: 'Server error', error });
+       res.status(500).json({ message: 'Server errors', error });
      }
  }
 
