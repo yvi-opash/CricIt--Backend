@@ -1,4 +1,4 @@
-import Match from "../model/match.model";
+import Match, { MatchStatus, TossDecision } from "../model/match.model";
 import Inning from "../model/inning.model";
 import { Request, Response } from "express";
 
@@ -6,9 +6,6 @@ export const createInning = async (req: Request, res: Response) => {
   try {
     const { matchId } = req.params;
     const {
-      inningNumber,
-      battingTeam,
-      bowlingTeam,
       striker,
       nonStriker,
       currentBowler,
@@ -17,9 +14,66 @@ export const createInning = async (req: Request, res: Response) => {
     const match = await Match.findById(matchId);
     if (!match) return res.status(404).json({ message: "match not found..." });
 
-    // if (inningNumber !== 1 && inningNumber !== 2) {
-    //   return res.status(400).json({ message: "inning noot start..." });
-    // }
+    if (
+      match.status !== MatchStatus.TOSS &&
+      match.status !== MatchStatus.INNINGS_BREAK
+    ) {
+      return res.status(400).json({
+        message: "Matchnot start inning ..",
+      });
+    }
+
+
+
+    const innings = await Inning.find({ matchId }).sort({
+      inningNumber: 1,
+    });
+
+    let inningNumber: number;
+    let battingTeam: any;
+    let bowlingTeam: any;
+
+    if(innings.length === 0 ){
+      inningNumber = 1;
+
+      const opponent = match.tossWinner?.toString() === match.teamA.toString()
+        ?match.teamB
+        : match.teamA;
+
+        if(match.tossDecision === TossDecision.BAT) {
+          battingTeam = match.tossWinner;
+          bowlingTeam = opponent;
+        }else{
+          battingTeam = opponent;
+          bowlingTeam = match.tossWinner;
+        }
+    }
+
+    else if(innings.length === 1) {
+      const firstInning = innings[0];
+
+      if(firstInning.status !== "completed") {
+        return res.status(400).json({
+          message : "First inning not compleated",
+        });
+      }
+
+      inningNumber = 2;
+      battingTeam = firstInning.bowlingTeam;
+      bowlingTeam = firstInning.battingTeam;
+    }
+    else {
+      return res.status(400).json({
+        message: "Both innings already completed",
+      });
+    }
+
+    if (!striker || !nonStriker || !currentBowler) {
+      return res.status(400).json({
+        message: "Opening batsmen and bowler required",
+      });
+    }
+
 
     const inning = await new Inning({
       matchId,
@@ -32,15 +86,24 @@ export const createInning = async (req: Request, res: Response) => {
       striker,
       nonStriker,
       currentBowler,
+      ballsInCurrentOver: 0,
+      status: "ongoing",
     });
 
     await inning.save();
 
-    res.status(202).json({ message: "inning created", inning });
+    match.status = MatchStatus.LIVE;
+     await match.save();
+
+   return res.status(201).json({
+      message: `Inning ${inningNumber} started`,
+      inning,
+    });
   } catch (error) {
     res.status(400).json({ message: "server error", error });
   }
 };
+
 
 export const updatScore = async (req: Request, res: Response) => {
   try {
@@ -102,3 +165,6 @@ export const compleateInning = async (req: Request, res: Response) => {
     res.status(400).json({ message: "server error", error });
   }
 };
+
+
+

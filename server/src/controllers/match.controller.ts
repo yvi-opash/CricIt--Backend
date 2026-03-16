@@ -4,6 +4,7 @@ import Inning from "../model/inning.model";
 import { Request, Response } from "express";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { request } from "https";
+import players from "../model/players.model";
 
 export const createMatch = async (req: AuthRequest, res: Response) => {
   try {
@@ -190,13 +191,35 @@ export const matchDetail = async (req: Request, res: Response) => {
       .populate("teamA", "teamname")
       .populate("teamB", "teamname")
       .populate("tossWinner", "teamname")
-      .populate("winner", "teamname");
+      .populate("winner", "teamname")
+      .populate("playingTeamA", "playername")
+      .populate("playingTeamB", "playername");
 
     if (!match)
       return res.status(404).json({ message: "match not created...." });
 
     res.status(200).json(match);
   } catch (error) {
+     console.log("MATCH DETAIL ERROR:", error);
     res.status(500).json({ message: "Server error", error });
   }
 };
+
+
+export const getAllMatch = async(req: AuthRequest, res: Response) => {
+  try {
+    const match = await Match.find({createdBy: req.user?.id})
+
+      const createdBy = req.user?.id;
+        if(!createdBy) {
+            return res.status(401).json({message: "Unauthorized"});
+        }
+
+        res.status(200).json(match);
+
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+}
+
+
