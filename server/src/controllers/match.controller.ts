@@ -206,21 +206,24 @@ export const matchDetail = async (req: Request, res: Response) => {
 };
 
 
-export const getAllMatch = async(req: AuthRequest, res: Response) => {
+export const getAllMatch = async (req: AuthRequest, res: Response) => {
   try {
-    const match = await Match.find({createdBy: req.user?.id})
+    const createdBy = req.user?.id;
 
-      const createdBy = req.user?.id;
-        if(!createdBy) {
-            return res.status(401).json({message: "Unauthorized"});
-        }
+    if (!createdBy) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
-        res.status(200).json(match);
+    const matches = await Match.find({ createdBy })
+      .populate("teamA", "teamname")   
+      .populate("teamB", "teamname")   
+      .sort({ createdAt: -1 });
 
+    res.status(200).json(matches);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: "Server error", error });
   }
-}
+};
 
 // for home page live match
 export const getLiveMatches = async (req: Request, res: Response) => {

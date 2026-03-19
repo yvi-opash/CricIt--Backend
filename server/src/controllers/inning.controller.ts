@@ -207,3 +207,14 @@ export const changeBowler = async (req : Request, res : Response) => {
 }
 
 
+export const getInningsByMatchId = async (req: Request, res: Response) => {
+  try {
+    const { matchId } = req.params;
+
+    const innings = await Inning.find({ matchId });
+
+    res.status(200).json(innings);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};

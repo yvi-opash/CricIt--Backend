@@ -188,6 +188,8 @@ export const getCommentary = async (req: Request, res: Response) => {
     .sort({ createdAt: -1 })
     .populate("batsman bowler");
 
+  
+
   const commentary = balls.map((b) => {
     let result = "";
 
@@ -197,7 +199,7 @@ export const getCommentary = async (req: Request, res: Response) => {
     else if (b.extraType) result = b.extraType;
     else result = `${b.runsScored} run`;
 
-    return `Over ${b.overNumber}.${b.ballNumber} - ${result}`;
+    return `Over ${b.overNumber}.${b.ballNumber + 1} - ${result}`;
   });
 
   res.json(commentary);
