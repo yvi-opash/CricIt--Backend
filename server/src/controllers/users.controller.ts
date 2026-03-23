@@ -74,7 +74,7 @@ export const logincontroller = async (req: Request, res: Response) => {
 };
 
 export const logoutcontroller = async (req: Request, res: Response) => {
-  res.status(200).json({ message: "User logged out successfully" });
+  res.status(200).json({ message: "User logged out successfuly" });
 };
 
 export const getLoginUser = async (req: AuthRequest, res: Response) => {
