@@ -62,7 +62,7 @@ export const  startInning = async (req: Request, res: Response) => {
 
       if(firstInning.status !== "completed") {
         return res.status(400).json({
-          message : "First inning not compleated",
+          message : "First inning not compleat",
         });
       }
 
