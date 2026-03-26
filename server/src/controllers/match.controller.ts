@@ -99,7 +99,7 @@ export const matchToss = async (req: Request, res: Response) => {
     ) {
       return res
         .status(400)
-        .json({ message: "enter team name who won the toss.." });
+        .json({ message: "enter team name who win toss.." });
     }
 
     match.tossWinner = tossWinner;

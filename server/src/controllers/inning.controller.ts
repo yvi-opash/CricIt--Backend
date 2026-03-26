@@ -2,7 +2,9 @@ import Match, { MatchStatus, TossDecision } from "../model/match.model";
 import Inning from "../model/inning.model";
 import { Request, Response } from "express";
 
-export const createInning = async (req: Request, res: Response) => {
+
+
+export const  startInning = async (req: Request, res: Response) => {
   try {
     const { matchId } = req.params;
     const {
@@ -33,24 +35,10 @@ export const createInning = async (req: Request, res: Response) => {
     let battingTeam: any;
     let bowlingTeam: any;
 
-    // if(innings.length === 0 ){
-    //   inningNumber = 1;
-
-    //   const opponent = match.tossWinner?.toString() === match.teamA.toString()
-    //     ?match.teamB
-    //     : match.teamA;
-
-    //     if(match.tossDecision === TossDecision.BAT) {
-    //       battingTeam = match.tossWinner;
-    //       bowlingTeam = opponent;
-    //     }else{
-    //       battingTeam = opponent;
-    //       bowlingTeam = match.tossWinner;
-    //     }
-    // }
+   
 
 
-    // ⭐ FIRST INNING
+    // FIRST INNING
     if (innings.length === 0) {
       inningNumber = 1;
 
@@ -238,3 +226,6 @@ export const getInningsByMatchId = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
+
+// in a start inning problem is all time in striker and not striker select option player all time teamA come and in opening bowler option always TeamB player come not follow batting team and bowling team player. see in screenshort after toss in db i store tosswinner and decision so on that in startinnig page set batting team player on striker and non striker and bowling team player on opening bowler. see what is issue and give me soluction 
